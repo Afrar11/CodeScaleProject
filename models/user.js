@@ -3,15 +3,25 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true, // Email is required
-    unique: true, // Email should be unique
+    required: true,
+    unique: true,
+    validate: {
+      validator: (value) => {
+        // Replace with your own email validation logic (e.g., regex)
+        return /\S+@\S+\.\S+/.test(value);
+      },
+      message: 'Invalid email address',
+    },
   },
-  location: String, // Location is optional
+  location: String,
   weatherData: {
-    type: Array, // You can store weather data as an array
-    default: [], // Default to an empty array
+    type: Array,
+    default: [],
   },
-  // You can add more fields as needed
+  // Add more fields as needed
+},
+{
+  timestamps: true, // Automatically add createdAt and updatedAt fields
 });
 
 const User = mongoose.model('User', userSchema);

@@ -1,10 +1,16 @@
-const User = require('../models/user'); // Import the User model
+const User = require('../models/user');
+const { validationResult } = require('express-validator');
 
 // Create a new user
 exports.createUser = async (req, res) => {
   try {
     const { email, location } = req.body;
-    // Validate input data here if needed
+
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     const newUser = new User({ email, location });
     const savedUser = await newUser.save();
@@ -20,9 +26,18 @@ exports.updateUserLocation = async (req, res) => {
   try {
     const { id } = req.params;
     const { location } = req.body;
-    // Validate input data here if needed
+
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     const updatedUser = await User.findByIdAndUpdate(id, { location }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     res.json(updatedUser);
   } catch (err) {
     console.error('Error updating user location:', err);

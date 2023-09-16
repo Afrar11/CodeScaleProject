@@ -2,10 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/userRoutes');
 const weatherScheduler = require('./schedulers/weatherScheduler');
+require('dotenv').config();
 
 const app = express();
 
-mongoose.connect('mongodb+srv://afrar11:<eFTqz8jcDHqJWM2i>@cluster0.onkjnbq.mongodb.net/?retryWrites=true&w=majority', {
+// MongoDB connection string (replace with your credentials and database name)
+const mongodbUri = 'mongodb+srv://afrar11:Sep@2023@cluster0.onkjnbq.mongodb.net/weatherReport';
+
+mongoose.connect(mongodbUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -24,4 +28,10 @@ app.use('/api', userRoutes);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal server error' });
 });
